@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+     <title>
+      MQTT 客戶端
+    </title> 
+    </head>
+    <body>
+     <form method='post' id='mqttForm' action="login.php">
+        <h2>MQTT 客戶端</h2>
+        關注目標
+        <input type="text" name="focusTopic" placeholder="關注目標"><br>
+        <button id="formBotton">顯示/收起連線資料</button>
+        <div id="hiddenInputs" style='display:none;'>
+          PHP 數值
+          <input type="text" id='phpIP' name="phpIP" placeholder="PHP位址 預設為8000" value="http://localhost:8000/"><br>
+          資料庫IP 數值
+          <input type="text" name="dataBaseIp" placeholder="資料庫位址"><br>
+          資料庫名稱
+          <input type="text" name="databaseName" placeholder="資料庫名稱"><br>
+          資料庫使用者名稱
+          <input type="text" name="userName" placeholder="資料庫使用者名稱"><br>
+          資料庫使用者密碼
+          <input type="password" name="userPassword" placeholder="資料庫使用者密碼">
+        </div><br>
+        <input type="submit" id="formSubmit" name="submit" value="登入">
+        <input type="reset" id="formReset" name="reset" value="清除">
+      </form> 
+    </body>
+    <script>
+    document.getElementById('formBotton').addEventListener('click', function(){
+      event.preventDefault();
+      const hiddenInputs = document.getElementById('hiddenInputs');
+      if(hiddenInputs.style.display === 'none' || hiddenInputs.style.display === ''){
+        hiddenInputs.style.display = 'block';
+      }
+      else {
+        hiddenInputs.style.display = 'none';
+      }
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('formSubmit').addEventListener('click', function(){
+        document.getElementById('mqttForm').action = document.getElementById('phpIP').value + "login.php";
+      });
+    });
+    </script>
+  </html>
+
