@@ -1,30 +1,34 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <tiele>
-      登入中
-    </tiele> 
-  </head>
-  <body>
-    <div>
-      <p>
-      下面顯示 php 的執行過程
-      </p>
-        <?php
-        ob_start();
-        echo "開始登入伺服器<br>";
-        echo "登入伺服器位址 ";
-        echo $_POST['dataBaseIp'];
-        echo "<br>";
-        echo "登入伺服庫 ";
-        echo $_POST['databaseName'];
-        echo "<br>";
-        echo "嘗試登入中...<br>";
-        flush();
-        ob_flush();
+<?php
+/**
+ * for login function
+ * if login successful
+ * save to session
+ * and select by other php
+**/
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type:text/html; charset=utf-8");
+session_start();
 
-        ?>
-    </div>
-  </body>
-</html>
+$data = json_decode(file_get_contents("php://input"), true);
 
+$host = $data['dataBaseIp'];
+$dbname = $data['databaseName'];
+$user = $data['userName'];
+$password = $data['userPassword'];
+
+// 在編碼好像有問題 需要確保是字串
+
+$conn = new PDO("pgsql:host=$host;port=5432;dbname=$dbname;user=$user;password=$password");
+sleep(3);
+
+if (!$conn) {
+    echo json_encode(["連線結果" => "失敗", "原因" => pg_last_error()]);
+    exit();
+}
+
+$_SESSINO['dbConn'] = $conn;
+echo json_encode(["連線結果" => "成功", "Data" => $user]);
+
+?>

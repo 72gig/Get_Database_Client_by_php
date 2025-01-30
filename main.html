@@ -6,29 +6,30 @@
     </title> 
     </head>
     <body>
-     <form method='post' id='mqttForm' action="login.php">
+     <form id='mqttForm'>
         <h2>MQTT 客戶端</h2>
         關注目標
         <input type="text" name="focusTopic" placeholder="關注目標"><br>
-        <button id="formBotton">顯示/收起連線資料</button>
+        <button type="button" id="formBotton">顯示/收起連線資料</button>
         <div id="hiddenInputs" style='display:none;'>
           PHP 數值
           <input type="text" id='phpIP' name="phpIP" placeholder="PHP位址 預設為8000" value="http://localhost:8000/"><br>
           資料庫IP 數值
-          <input type="text" name="dataBaseIp" placeholder="資料庫位址"><br>
+          <input type="text" id="dataBaseIp" name="dataBaseIp" placeholder="資料庫位址"><br>
           資料庫名稱
-          <input type="text" name="databaseName" placeholder="資料庫名稱"><br>
+          <input type="text" id="databaseName" name="databaseName" placeholder="資料庫名稱"><br>
           資料庫使用者名稱
-          <input type="text" name="userName" placeholder="資料庫使用者名稱"><br>
+          <input type="text" id="userName" name="userName" placeholder="資料庫使用者名稱"><br>
           資料庫使用者密碼
-          <input type="password" name="userPassword" placeholder="資料庫使用者密碼">
+          <input type="password" id="userPassword" name="userPassword" placeholder="資料庫使用者密碼">
         </div><br>
         <input type="submit" id="formSubmit" name="submit" value="登入">
         <input type="reset" id="formReset" name="reset" value="清除">
       </form> 
+      <textarea id="mqttTextArea" rows="30" cols="60"></textarea>
     </body>
     <script>
-    document.getElementById('formBotton').addEventListener('click', function(){
+    document.getElementById('formBotton').addEventListener('click', function(event){
       event.preventDefault();
       const hiddenInputs = document.getElementById('hiddenInputs');
       if(hiddenInputs.style.display === 'none' || hiddenInputs.style.display === ''){
@@ -39,8 +40,45 @@
       }
     });
     document.addEventListener('DOMContentLoaded', function () {
-      document.getElementById('formSubmit').addEventListener('click', function(){
-        document.getElementById('mqttForm').action = document.getElementById('phpIP').value + "login.php";
+      document.getElementById('formSubmit').addEventListener('click', function(event){
+        event.preventDefault();
+        let phpIP = document.getElementById('phpIP').value;
+        let dataBaseIp = document.getElementById('dataBaseIp').value;
+        let databaseName = document.getElementById('databaseName').value;
+        let userName = document.getElementById('userName').value;
+        let userPassword = document.getElementById('userPassword').value;
+
+        fetch(phpIP + "login.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({dataBaseIp: dataBaseIp, databaseName: databaseName, userName: userName, userPassword: userPassword}),
+          mode: "cors"
+          })
+          .then(response => response.json())
+          .then(data => {
+            // 顯示連線成功
+            console.log(data);
+
+            // 建立定時任務
+            //let mqttClock = setInterval(selectResult, 5000);
+            //function selectResult(){
+            //  fetch(phpIP + "select.php", {
+            //    method: "POST",
+            //    headers: {
+            //      "Content-Type": "application/json",
+            //    },
+            //    mode: "cors"
+            //    })
+            //    .then(response => response.json())
+            //    .then(data => {
+            //      console.log(data);
+            //    }
+            //    .catch(error => console.error("error: ", error));
+            //}
+          })
+          .catch(error => console.error("error: ", error));
       });
     });
     </script>
