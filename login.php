@@ -19,16 +19,18 @@ $user = $data['userName'];
 $password = $data['userPassword'];
 
 // 在編碼好像有問題 需要確保是字串
+$connString = "pgsql:host=" . $host . ";port=5432;dbname=" . $dbname . ";user=" . $user . ";password=" . $password;
 
-$conn = new PDO("pgsql:host=$host;port=5432;dbname=$dbname;user=$user;password=$password");
-sleep(3);
+$conn = new PDO($connString);
+sleep(1);
 
 if (!$conn) {
     echo json_encode(["連線結果" => "失敗", "原因" => pg_last_error()]);
     exit();
 }
 
-$_SESSINO['dbConn'] = $conn;
+$_SESSION['dbConn'] = $connString;
+$conn = null;
 echo json_encode(["連線結果" => "成功", "Data" => $user]);
 
 ?>

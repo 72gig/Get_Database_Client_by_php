@@ -62,21 +62,21 @@
             console.log(data);
 
             // 建立定時任務
-            //let mqttClock = setInterval(selectResult, 5000);
-            //function selectResult(){
-            //  fetch(phpIP + "select.php", {
-            //    method: "POST",
-            //    headers: {
-            //      "Content-Type": "application/json",
-            //    },
-            //    mode: "cors"
-            //    })
-            //    .then(response => response.json())
-            //    .then(data => {
-            //      console.log(data);
-            //    }
-            //    .catch(error => console.error("error: ", error));
-            //}
+            let mqttClock = setInterval(selectResult, 5000);
+            function selectResult(){
+              fetch(phpIP + "select.php", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                mode: "cors"
+                })
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data);
+                }
+                .catch(error => console.error("error: ", error));
+            }
           })
           .catch(error => console.error("error: ", error));
       });
