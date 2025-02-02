@@ -8,6 +8,10 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type:text/html; charset=utf-8");
 $input = json_decode(file_get_contents("php://input"), true);
+if ($input === null) {
+    echo json_encode(["error" => "沒有資料"]);
+    exit();
+}
 ini_set('session.save_path', __DIR__ . '/session');
 
 session_id($input['sessionID']);
@@ -22,7 +26,7 @@ try {
     sleep(1);
     $select = "select * from mqtt_table where record_time >= @d::date";
     // 執行查詢
-    $run = $dbConn->query($select);
+    $run = $Conn->query($select);
     // 取出結果
     $row = $run->fetchAll(PDO::FETCH_ASSOC);
 

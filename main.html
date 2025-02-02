@@ -47,6 +47,7 @@
         let databaseName = document.getElementById('databaseName').value;
         let userName = document.getElementById('userName').value;
         let userPassword = document.getElementById('userPassword').value;
+        let getSessionID = null;
 
         fetch(phpIP + "login.php", {
           method: "POST",
@@ -62,22 +63,24 @@
             console.log(data.sessionID);
 
             // 建立定時任務
-            let mqttClock = setInterval(selectResult, 5000);
-            let sessionID = data.sessionID;
-            function selectResult(){
-              fetch(phpIP + "select.php", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({sessionID: sessionID}),
-                mode: "cors",
-                })
-                .then(response => response.json())
-                .then(data => {
-                  console.log(data);
-                })
-                .catch(error => console.error("error: ", error));
+            getSessionID = data.sessionID;
+            if (getSessionID !== null) {
+              let mqttClock = setInterval(selectResult, 5000);
+              function selectResult(){
+                fetch(phpIP + "select.php", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({sessionID: getSessionID}),
+                  mode: "cors",
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log(data);
+                  })
+                  .catch(error => console.error("error: ", error));
+              }
             }
           })
           .catch(error => console.error("error: ", error));
