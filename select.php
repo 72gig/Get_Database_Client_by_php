@@ -7,14 +7,19 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type:text/html; charset=utf-8");
-session_start();
+$input = json_decode(file_get_contents("php://input"), true);
+ini_set('session.save_path', __DIR__ . '/session');
+
+session_id($input['sessionID']);
+
+session_start();  // 重開
 
 $dbConnString = $_SESSION['dbConn'];
 // 開始連線
-$conn = new PDO($dbConnString);
-sleep(1);
 
 try {
+    $conn = new PDO($dbConnString);
+    sleep(1);
     $select = "select * from mqtt_table where record_time >= @d::date";
     // 執行查詢
     $run = $dbConn->query($select);

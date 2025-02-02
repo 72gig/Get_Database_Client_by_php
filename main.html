@@ -59,22 +59,24 @@
           .then(response => response.json())
           .then(data => {
             // 顯示連線成功
-            console.log(data);
+            console.log(data.sessionID);
 
             // 建立定時任務
             let mqttClock = setInterval(selectResult, 5000);
+            let sessionID = data.sessionID;
             function selectResult(){
               fetch(phpIP + "select.php", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
-                mode: "cors"
+                body: JSON.stringify({sessionID: sessionID}),
+                mode: "cors",
                 })
                 .then(response => response.json())
                 .then(data => {
                   console.log(data);
-                }
+                })
                 .catch(error => console.error("error: ", error));
             }
           })

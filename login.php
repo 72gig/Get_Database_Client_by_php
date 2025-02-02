@@ -9,28 +9,23 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type:text/html; charset=utf-8");
+ini_set('session.save_path', __DIR__ . '/session');  // 沒有先設定會出現問題 像是找不到保存皂位置
 session_start();
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-$host = $data['dataBaseIp'];
-$dbname = $data['databaseName'];
-$user = $data['userName'];
-$password = $data['userPassword'];
+$host = (string) $data['dataBaseIp'];
+$dbname = (string) $data['databaseName'];
+$user = (string) $data['userName'];
+$password = (string) $data['userPassword'];
 
 // 在編碼好像有問題 需要確保是字串
-$connString = "pgsql:host=" . $host . ";port=5432;dbname=" . $dbname . ";user=" . $user . ";password=" . $password;
-
-$conn = new PDO($connString);
-sleep(1);
-
-if (!$conn) {
-    echo json_encode(["連線結果" => "失敗", "原因" => pg_last_error()]);
-    exit();
-}
+$connString = "pgsql:host=" . trim($host) . ";port=5432;dbname=" . trim($dbname) . ";user=" . trim($user) . ";password=" . trim($password);
 
 $_SESSION['dbConn'] = $connString;
-$conn = null;
-echo json_encode(["連線結果" => "成功", "Data" => $user]);
+$session_id = session_id();
+
+echo json_encode(["連線準備" => "完成", "Data" => $_SESSION['dbConn'], "sessionID" => $session_id]);
+
 
 ?>
