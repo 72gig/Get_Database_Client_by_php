@@ -24,9 +24,12 @@ $dbConnString = $_SESSION['dbConn'];
 try {
     $conn = new PDO($dbConnString);
     sleep(1);
-    $select = "select * from mqtt_table where record_time >= @d::date";
+    $select = "select * from mqtt_table where record_time >= :d";
     // 執行查詢
-    $run = $Conn->query($select);
+    $run = $conn->prepare($select);
+    $dateString = date("Y-m-d");
+    $run->bindParam(":d", $dateString);
+    $run->execute();
     // 取出結果
     $row = $run->fetchAll(PDO::FETCH_ASSOC);
 
@@ -34,7 +37,7 @@ try {
     echo json_encode(["連線結果" => "成功", "Data" => $row]);
 
 } catch (PDOException $e){
-    echo json_encode(["連線結果" => "失敗", "Data" => $e]);
+    echo json_encode(["連線結果" => "失敗", "Data" => $e->getMessage()]);
 }
 
 

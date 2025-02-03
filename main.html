@@ -9,7 +9,7 @@
      <form id='mqttForm'>
         <h2>MQTT 客戶端</h2>
         關注目標
-        <input type="text" name="focusTopic" placeholder="關注目標"><br>
+        <input type="text" id="focusTopic" name="focusTopic" placeholder="關注目標"><br>
         <button type="button" id="formBotton">顯示/收起連線資料</button>
         <div id="hiddenInputs" style='display:none;'>
           PHP 數值
@@ -40,6 +40,7 @@
       }
     });
     document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('mqttTextArea').value = "";  // 清空數值
       document.getElementById('formSubmit').addEventListener('click', function(event){
         event.preventDefault();
         let phpIP = document.getElementById('phpIP').value;
@@ -60,12 +61,13 @@
           .then(response => response.json())
           .then(data => {
             // 顯示連線成功
-            console.log(data.sessionID);
+            console.log("連線成功");
 
             // 建立定時任務
             getSessionID = data.sessionID;
             if (getSessionID !== null) {
               let mqttClock = setInterval(selectResult, 5000);
+              let textAreaContent = '';
               function selectResult(){
                 fetch(phpIP + "select.php", {
                   method: "POST",
@@ -77,9 +79,18 @@
                   })
                   .then(response => response.json())
                   .then(data => {
-                    console.log(data);
+                    console.log(data.Data);
+                    let result = data.Data;
+                    let focusTopicValue = document.getElementById('focusTopic').value;
+                    textAreaContent = '';
+                    result.forEach(function(item){
+                      if (item['topic'].trim() === focusTopicValue){
+                        textAreaContent += ("輸入時間: " + item['record_time'] + " 傳入資料: " + item['payload'] + "\n");
+                      }
+                    });
                   })
                   .catch(error => console.error("error: ", error));
+                document.getElementById('mqttTextArea').value = textAreaContent;
               }
             }
           })
