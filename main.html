@@ -68,6 +68,7 @@
             if (getSessionID !== null) {
               let mqttClock = setInterval(selectResult, 5000);
               let textAreaContent = '';
+              let thisDay = new Date();
               function selectResult(){
                 fetch(phpIP + "select.php", {
                   method: "POST",
@@ -84,7 +85,9 @@
                     let focusTopicValue = document.getElementById('focusTopic').value;
                     textAreaContent = '';
                     result.forEach(function(item){
-                      if (item['topic'].trim() === focusTopicValue){
+                      let checkDay = String(thisDay.getFullYear()) + "-" + String(thisDay.getMonth() + 1).padStart(2, "0") + "-" + String(thisDay.getDate()).padStart(2, "0");
+                      console.log(checkDay);
+                      if ((item['topic'].trim() === focusTopicValue) && (item['record_time'].includes(checkDay))){
                         textAreaContent += ("輸入時間: " + item['record_time'] + " 傳入資料: " + item['payload'] + "\n");
                       }
                     });
